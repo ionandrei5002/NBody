@@ -29,7 +29,7 @@ struct particles {
 void initParticles(int nb) {
     std::srand(std::time(NULL));
     for(int i = 0; i < nb; i++) {
-        Particles->cx[i] = 800 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->cx[i] = 1000 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
         Particles->cy[i] = 800 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
@@ -47,16 +47,16 @@ void initParticles(int nb) {
         Particles->fy[i] = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
-        Particles->mass[i] = 10e15 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->mass[i] = 10e18 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
 
-    Particles->cx[0] = 500.f;
-    Particles->cy[0] = 400.f;
-    Particles->vx[0] = .0f;
-    Particles->vy[0] = .0f;
-    Particles->fx[0] = .0f;
-    Particles->fy[0] = .0f;
-    Particles->mass[0] = 10e18;
+//    Particles->cx[0] = 500.f;
+//    Particles->cy[0] = 400.f;
+//    Particles->vx[0] = .0f;
+//    Particles->vy[0] = .0f;
+//    Particles->fx[0] = .0f;
+//    Particles->fy[0] = .0f;
+//    Particles->mass[0] = 10e18;
 }
 
 void printParticles(int nb) {
@@ -116,8 +116,10 @@ int main() {
     initParticles(nb);
     sf::CircleShape* shapes = new sf::CircleShape[nb];
     for(int i = 0; i < nb; i++) {
-        shapes[i] = sf::CircleShape(1.f);
-        shapes[i].setFillColor(sf::Color::Red);
+        int red = (int) floor(Particles->mass[i]*254/(Particles->mass[i]*1e20));
+        int blue = (int) floor(Particles->mass[i]*254/(Particles->mass[i]*1e20));
+        shapes[i] = sf::CircleShape(2.f);
+        shapes[i].setFillColor(sf::Color(red, 255, blue));
     }
 
     shapes[0].setRadius(10.f);
@@ -146,7 +148,7 @@ int main() {
                     addForces(i, j);
             }
         }
-        update(.1f, nb);
+        update(.01f, nb);
         setPosition(shapes, nb);
 
         float ElapsedTime = _clock.getElapsedTime().asMicroseconds();
