@@ -6,7 +6,7 @@
 #include <math.h>
 
 static float G = 6.673e-11;
-int nb = 1024;
+int nb = 2048;
 struct particles {
     float* cx;
     float* cy;
@@ -28,35 +28,44 @@ struct particles {
 
 void initParticles(int nb) {
     std::srand(std::time(NULL));
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb/2; i++) {
         Particles->cx[i] = 1000 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb/2; i++) {
         Particles->cy[i] = 800 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
-    for(int i = 0; i < nb; i++) {
-        Particles->vx[i] = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+    for(int i = nb/2; i < nb; i++) {
+        Particles->cx[i] = 600 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+    }
+    for(int i = nb/2; i < nb; i++) {
+        Particles->cy[i] = 400 + 200 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
-        Particles->vy[i] = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->vx[i] = 0 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
-        Particles->fx[i] = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->vy[i] = 0 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
-        Particles->fy[i] = static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->fx[i] = 0 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
     for(int i = 0; i < nb; i++) {
-        Particles->mass[i] = 10e18 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+        Particles->fy[i] = 0 * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
+    }
+    for(int i = 0; i < nb; i++) {
+        Particles->mass[i] = 10e13f * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
     }
 
-//    Particles->cx[0] = 500.f;
-//    Particles->cy[0] = 400.f;
-//    Particles->vx[0] = .0f;
-//    Particles->vy[0] = .0f;
-//    Particles->fx[0] = .0f;
-//    Particles->fy[0] = .0f;
-//    Particles->mass[0] = 10e18;
+    Particles->cx[0] = 500.f;
+    Particles->cy[0] = 400.f;
+    Particles->vx[0] = .0f;
+    Particles->vy[0] = .0f;
+    Particles->fx[0] = .0f;
+    Particles->fy[0] = .0f;
+    Particles->mass[0] = 10e18;
+    Particles->mass[1] = 10e17;
+    Particles->mass[2] = 10e17;
+    Particles->mass[3] = 10e17;
 }
 
 void printParticles(int nb) {
@@ -72,26 +81,44 @@ void printParticles(int nb) {
 }
 
 void update(float dt, int nb) {
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->vx[i] += dt * Particles->fx[i] / Particles->mass[i];
+        Particles->vx[i+1] += dt * Particles->fx[i+1] / Particles->mass[i+1];
+        Particles->vx[i+2] += dt * Particles->fx[i+2] / Particles->mass[i+2];
+        Particles->vx[i+3] += dt * Particles->fx[i+3] / Particles->mass[i+3];
     }
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->vy[i] += dt * Particles->fy[i] / Particles->mass[i];
+        Particles->vy[i+1] += dt * Particles->fy[i+1] / Particles->mass[i+1];
+        Particles->vy[i+2] += dt * Particles->fy[i+2] / Particles->mass[i+2];
+        Particles->vy[i+3] += dt * Particles->fy[i+3] / Particles->mass[i+3];
     }
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->cx[i] += dt * Particles->vx[i];
+        Particles->cx[i+1] += dt * Particles->vx[i+1];
+        Particles->cx[i+2] += dt * Particles->vx[i+2];
+        Particles->cx[i+3] += dt * Particles->vx[i+3];
     }
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->cy[i] += dt * Particles->vy[i];
+        Particles->cy[i+1] += dt * Particles->vy[i+1];
+        Particles->cy[i+2] += dt * Particles->vy[i+2];
+        Particles->cy[i+3] += dt * Particles->vy[i+3];
     }
 }
 
 void resetForces(int nb) {
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->fx[i] = 0.0f;
+        Particles->fx[i+1] = 0.0f;
+        Particles->fx[i+2] = 0.0f;
+        Particles->fx[i+3] = 0.0f;
     }
-    for(int i = 0; i < nb; i++) {
+    for(int i = 0; i < nb; i+=4) {
         Particles->fy[i] = 0.0f;
+        Particles->fy[i+1] = 0.0f;
+        Particles->fy[i+2] = 0.0f;
+        Particles->fy[i+3] = 0.0f;
     }
 }
 
@@ -105,14 +132,17 @@ void addForces(int i, int j) {
     Particles->fy[i] += F * dy/dist;
 }
 
-void setPosition(sf::CircleShape shapes[], int nb) {
-    for(int i = 0; i < nb; i++) {
+void setPosition(sf::CircleShape* shapes, int nb) {
+    for(int i = 0; i < nb; i+=4) {
         shapes[i].setPosition(Particles->cx[i], Particles->cy[i]);
+        shapes[i+1].setPosition(Particles->cx[i+1], Particles->cy[i+1]);
+        shapes[i+2].setPosition(Particles->cx[i+2], Particles->cy[i+2]);
+        shapes[i+3].setPosition(Particles->cx[i+3], Particles->cy[i+3]);
     }
 }
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(1000, 800), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(1000, 800), "NBody Simulation");
     initParticles(nb);
     sf::CircleShape* shapes = new sf::CircleShape[nb];
     for(int i = 0; i < nb; i++) {
@@ -124,6 +154,12 @@ int main() {
 
     shapes[0].setRadius(10.f);
     shapes[0].setFillColor(sf::Color::Blue);
+    shapes[1].setRadius(10.f);
+    shapes[1].setFillColor(sf::Color::Red);
+    shapes[2].setRadius(10.f);
+    shapes[2].setFillColor(sf::Color::Black);
+    shapes[3].setRadius(10.f);
+    shapes[3].setFillColor(sf::Color::Cyan);
 
     sf::Clock _clock;
 
@@ -148,7 +184,7 @@ int main() {
                     addForces(i, j);
             }
         }
-        update(.01f, nb);
+        update(.1f, nb);
         setPosition(shapes, nb);
 
         float ElapsedTime = _clock.getElapsedTime().asMicroseconds();
@@ -162,10 +198,13 @@ int main() {
         text.setString(str);
         text.setCharacterSize(25);
 
-        window.clear(sf::Color(255,255,255));
+        window.clear(sf::Color::White);
 
-        for(int i = 0; i < 1024; i++) {
+        for(int i = 0; i < nb; i+=4) {
             window.draw(shapes[i]);
+            window.draw(shapes[i+1]);
+            window.draw(shapes[i+2]);
+            window.draw(shapes[i+3]);
         }
         window.draw(text);
 
